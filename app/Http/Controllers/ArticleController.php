@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
 use App\Models\Article;
+
 
 class ArticleController extends Controller
 {
@@ -31,15 +34,12 @@ class ArticleController extends Controller
     }
 
     // Здесь нам понадобится объект запроса для извлечения данных
-    public function store(Request $request)
+    public function store(StoreArticleRequest $request)
     {
         // Проверка введенных данных
         // Если будут ошибки, то возникнет исключение
         // Иначе возвращаются данные формы
-        $data = $request->validate([
-            'name' => 'required|unique:articles',
-            'body' => 'required|min:10',
-        ]);
+        $data = $request->validated();
 
         $article = new Article();
         // Заполнение статьи данными из формы
@@ -49,6 +49,25 @@ class ArticleController extends Controller
 
         // Редирект на указанный маршрут
         return redirect()
-        ->route('articles.index');
+        ->route('articles.index')
+        ->with('success', 'Успошно создано!');
+    }
+
+    public function edit($article)
+    {
+        $article = Article::findOrFail($article);
+        return view('article.edit', compact('article'));
+    }
+
+    public function update(UpdateArticleRequest $request, Article $article)
+    {
+        //$article = Article::findOrFail($article->id);
+        $data = $request->validated();
+
+        $article->fill($data);
+        $article->save();
+        return redirect()
+        ->route('articles.index')
+        ->with('success', 'Статья успешно обновлена');
     }
 }
