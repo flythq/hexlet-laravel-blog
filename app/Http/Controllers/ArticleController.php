@@ -70,4 +70,16 @@ class ArticleController extends Controller
         ->route('articles.index')
         ->with('success', 'Статья успешно обновлена');
     }
+
+    // Не забывайте про авторизацию (здесь не рассматривается)
+    // Удаление должно быть доступно только тем, кто может его выполнять
+    public function destroy($id)
+    {
+        // DELETE — идемпотентный метод, поэтому результат операции всегда один и тот же
+        $article = Article::find($id);
+        if ($article) {
+            $article->delete();
+        }
+        return redirect()->route('articles.index');
+    }
 }
