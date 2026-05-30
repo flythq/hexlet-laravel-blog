@@ -14,6 +14,5 @@
         <div>{{Str::limit($article->body, 200)}}</div>
         <div><a href="{{route('articles.edit',  $article->id)}}">Edit</a></div>
         <div><a href="{{ route('articles.destroy', $article->id) }}" data-confirm="Вы уверены?" data-method="delete" rel="nofollow">Удалить</a></div>
-        <input type="submit" value="Сохранить" data-disable-with="Сохраняем">
     @endforeach
 @endsection

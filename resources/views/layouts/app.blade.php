@@ -8,16 +8,13 @@
 <meta name="csrf-param" content="_token" />
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body>
-<div class="text-red-500 text-3xl">
-TEST TAILWIND
-</div>
-<div class="container mt-4">
+<body class="bg-gray-100">
+<div class="container mx-auto px-4 mt-4">
 <h1>@yield('header')</h1>
 <div>
     @include('navigation.main')
 </div>
-<div>
+<div class="max-w-5xl mx-auto p-6">
 @yield('content')
 </div>
 </div>

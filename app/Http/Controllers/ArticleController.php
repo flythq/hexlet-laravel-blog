@@ -2,84 +2,85 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use Illuminate\Http\Request;
 use App\Http\Requests\StoreArticleRequest;
 use App\Http\Requests\UpdateArticleRequest;
-use App\Models\Article;
-
 
 class ArticleController extends Controller
 {
+    /**
+     * Display a listing of the resource.
+     */
     public function index()
     {
         $articles = Article::paginate();
-
-        // Статьи передаются в шаблон
-        // compact('articles') => [ 'articles' => $articles ]
         return view('article.index', compact('articles'));
     }
 
-    public function show($id)
-    {
-        $article = Article::findOrFail($id);
-        return view('article.show', compact('article'));
-    }
-
-    // Вывод формы
+    /**
+     * Show the form for creating a new resource.
+     */
     public function create()
     {
-        // Передаем в шаблон вновь созданный объект. Он нужен для вывода формы
         $article = new Article();
         return view('article.create', compact('article'));
     }
 
-    // Здесь нам понадобится объект запроса для извлечения данных
+    /**
+     * Store a newly created resource in storage.
+     */
     public function store(StoreArticleRequest $request)
     {
-        // Проверка введенных данных
-        // Если будут ошибки, то возникнет исключение
-        // Иначе возвращаются данные формы
         $data = $request->validated();
 
         $article = new Article();
-        // Заполнение статьи данными из формы
         $article->fill($data);
-        // При ошибках сохранения возникнет исключение
         $article->save();
 
-        // Редирект на указанный маршрут
         return redirect()
-        ->route('articles.index')
-        ->with('success', 'Успошно создано!');
+            ->route('articles.index')
+            ->with('success', 'Успешно создано!');
     }
 
-    public function edit($article)
+    /**
+     * Display the specified resource.
+     */
+    public function show(Article $article)
     {
-        $article = Article::findOrFail($article);
+        //$article = Article::findOrFail($article);
+        return view('article.show', compact('article'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Article $article)
+    {
         return view('article.edit', compact('article'));
     }
 
+    /**
+     * Update the specified resource in storage.
+     */
     public function update(UpdateArticleRequest $request, Article $article)
     {
-        //$article = Article::findOrFail($article->id);
-        $data = $request->validated();
+        $article->update($request->validated());
 
-        $article->fill($data);
-        $article->save();
         return redirect()
         ->route('articles.index')
         ->with('success', 'Статья успешно обновлена');
     }
 
-    // Не забывайте про авторизацию (здесь не рассматривается)
-    // Удаление должно быть доступно только тем, кто может его выполнять
-    public function destroy($id)
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Article $article)
     {
-        // DELETE — идемпотентный метод, поэтому результат операции всегда один и тот же
-        $article = Article::find($id);
-        if ($article) {
-            $article->delete();
-        }
-        return redirect()->route('articles.index');
+        $article->delete();
+
+        return redirect()
+        ->route('articles.index')
+        ->with('success', 'Статья успешно удалена');
     }
 }
